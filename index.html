@@ -1,31 +1,438 @@
- <!doctype html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%- metaTitle %></title>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pedro Saraiva · AI Engineer</title>
+<meta name="description" content="Pedro Saraiva builds AI agents that run in production, and the infrastructure under them. LLM agents, MLOps and Kubernetes. Available for remote work.">
+<meta property="og:title" content="Pedro Saraiva · AI Engineer">
+<meta property="og:description" content="AI agents in production, and the infrastructure under them.">
+<meta name="theme-color" content="#121821">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a full-bleed Storm hero (the brand's dark cover), then a light ledger: label column left, content right, stacking on phones. */
+:root {
+  --storm: #121821; --slate: #2A3442; --ice: #C9D6E2; --frost: #F2F5F8; --hail: #D9962B;
+  --bg: #F2F5F8; --surface: #E6ECF1; --card: #FFFFFF; --fg: #121821; --muted: #4E5B6B; --line: #C9D3DD;
+  --accent: #9A5F0A; --ring: #121821;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0E131A; --surface: #1A2230; --card: #151C27; --fg: #E3EAF0; --muted: #94A3B3; --line: #2A3442;
+          --accent: #E3A645; --ring: #C9D6E2; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 1.0625rem/1.65 var(--body); }
+.wrap { max-width: 64rem; margin-inline: auto; padding-inline: max(16px, env(safe-area-inset-left)); }
+a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: .2em; }
+a:hover { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--hail); outline-offset: 3px; }
 
-    <meta property="title" content="<%- metaTitle %>" />
-    <meta name="description" content="<%- metaDescription %>" />
+/* ---------- Storm hero ---------- */
+.storm { background: var(--storm); color: #E3EAF0; position: relative; overflow: hidden; }
+.storm::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(105deg, transparent 0 46px, rgba(201,214,226,.035) 46px 47px); }
+.storm a:hover { color: #E3A645; }
+header.top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+             padding-block: 1.25rem; border-bottom: 1px solid var(--slate); position: relative; }
+.brand { display: flex; align-items: center; gap: .6rem; text-decoration: none;
+         font: 800 1.05rem/1 var(--display); font-stretch: 118%; letter-spacing: -.01em; }
+.brand svg { width: 28px; height: 28px; }
+nav { display: flex; gap: 1.1rem; flex-wrap: wrap; font: 500 .78rem/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+nav a { text-decoration: none; color: #94A3B3; }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2rem; align-items: center;
+        padding-block: clamp(3rem, 8vw, 6rem) clamp(2.5rem, 6vw, 4rem); position: relative; }
+.eyebrow { font: 500 .78rem/1.4 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: #94A3B3; margin: 0 0 1.5rem; }
+h1 { font: 800 clamp(2.2rem, 6.4vw, 4.6rem)/1.02 var(--display); font-stretch: 108%; letter-spacing: -.035em;
+     margin: 0; text-wrap: balance; max-width: 15ch; }
+h1 em { font-style: normal; color: #E3A645; }
+.lede { max-width: 36rem; color: #B7C3CF; font-size: 1.15rem; margin: 1.75rem 0 2rem; }
+.ctas { display: flex; gap: .75rem; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: .5rem; padding: .75rem 1.1rem; border: 1px solid #C9D6E2;
+       font: 500 .85rem/1 var(--mono); text-decoration: none; letter-spacing: .02em; }
+.btn.primary { background: var(--hail); border-color: var(--hail); color: var(--storm); }
+.btn.primary:hover { background: #E3A645; color: var(--storm); }
+.big-mark { width: clamp(8rem, 22vw, 15rem); height: auto; }
+.big-mark .ring { fill: none; stroke: #C9D6E2; }
+.big-mark .core { fill: var(--hail); }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--slate); position: relative; }
+.facts div { padding: 1.1rem 1.25rem 1.4rem 0; display: grid; gap: .2rem; }
+.facts div + div { padding-left: 1.25rem; border-left: 1px solid var(--slate); }
+.facts b { font: 800 clamp(1.4rem, 3.4vw, 2rem)/1.1 var(--display); font-stretch: 108%; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.facts span { font: 400 .78rem/1.4 var(--mono); color: #94A3B3; text-transform: uppercase; letter-spacing: .06em; }
 
-    <meta itemprop="name" content="<%- metaTitle %>" />
-    <meta itemprop="description" content="<%- metaDescription %>" />
-    <meta itemprop="image" content="<%- metaImageURL %>" />
+@media (prefers-reduced-motion: no-preference) {
+  .big-mark .ring { stroke-dasharray: 180; animation: draw 1.6s cubic-bezier(.3,.6,.2,1) both; }
+  .big-mark .ring.inner { stroke-dasharray: 110; animation-delay: .35s; }
+  .big-mark .core { animation: settle 1s .9s cubic-bezier(.3,1.4,.5,1) both, cycle 7s 3s ease-in-out infinite; }
+  @keyframes draw { from { stroke-dashoffset: 180; } to { stroke-dashoffset: 0; } }
+  @keyframes settle { from { transform: translateY(-22px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes cycle { 0%, 62%, 100% { transform: none; } 74% { transform: translateY(-10px); } 86% { transform: translateY(2px); } }
+}
 
-    <meta property="og:title" content="<%- metaTitle %>" />
-    <meta property="og:description" content="<%- metaDescription %>" />
-    <meta property="og:image" content="<%- metaImageURL %>" />
-    <meta property="og:image:secure_url" content="<%- metaImageURL %>" />
+/* ---------- Ledger sections ---------- */
+section { padding-block: 3.5rem; border-top: 1px solid var(--line); }
+main > section:first-child { border-top: 0; }
+.sec-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin: 0 0 2rem; }
+.sec-head h2 { font: 500 .8rem/1 var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 0; }
+.sec-head h2::before { content: ""; display: inline-block; width: .55em; height: .55em; border-radius: 50%; background: var(--hail); margin-right: .6em; vertical-align: .05em; }
+.rows { display: grid; }
+.row { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 1.5rem; padding-block: 1.25rem; border-bottom: 1px dashed var(--line); }
+.row:last-child { border-bottom: 0; }
+.row .k { font: 500 .8rem/1.5 var(--mono); color: var(--muted); padding-top: .3rem; }
+.row h3 { font: 700 1.25rem/1.25 var(--display); font-stretch: 104%; margin: 0 0 .35rem; letter-spacing: -.01em; }
+.row p { margin: 0; color: var(--muted); max-width: 42rem; }
+.tags { display: flex; flex-wrap: wrap; gap: .4rem; margin: .7rem 0 0; padding: 0; list-style: none; }
+.tags li { font: 400 .72rem/1 var(--mono); padding: .35rem .5rem; background: var(--surface); color: var(--fg); }
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="<%- metaTitle %>" />
-    <meta name="twitter:description" content="<%- metaDescription %>" />
-    <meta name="twitter:image" content="<%- metaImageURL %>" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+/* Publication */
+.paper { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; gap: 2rem; background: var(--card); border: 1px solid var(--line); padding: 1.75rem; }
+.paper .venue { font: 500 .78rem/1.4 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin: 0 0 .6rem; }
+.paper h3 { font: 700 1.45rem/1.2 var(--display); font-stretch: 104%; letter-spacing: -.015em; margin: 0 0 .6rem; text-wrap: balance; }
+.paper .authors { margin: 0 0 1rem; color: var(--muted); font-size: .92rem; }
+.paper .authors b { color: var(--fg); font-weight: 600; }
+.paper p { margin: 0 0 1rem; }
+.paper .links { display: flex; gap: 1rem; flex-wrap: wrap; font: 500 .85rem/1.4 var(--mono); }
+.result { border-left: 1px solid var(--line); padding-left: 1.5rem; display: grid; gap: 1.1rem; align-content: start; }
+.result div { display: grid; gap: .1rem; }
+.result b { font: 800 2rem/1 var(--display); font-stretch: 108%; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.result span { font: 400 .78rem/1.4 var(--mono); color: var(--muted); }
+
+/* Projects */
+.filters { display: flex; gap: .4rem; flex-wrap: wrap; }
+.filters button { font: 500 .75rem/1 var(--mono); text-transform: uppercase; letter-spacing: .06em; padding: .5rem .7rem;
+  background: transparent; color: var(--muted); border: 1px solid var(--line); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.proj { background: var(--card); padding: 1.4rem; display: flex; flex-direction: column; gap: .55rem; min-width: 0; }
+.proj[hidden] { display: none; }
+.proj .area { font: 500 .72rem/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+.proj h3 { font: 700 1.1rem/1.25 var(--display); font-stretch: 104%; margin: 0; }
+.proj h3 a { text-decoration: none; }
+.proj h3 a::after { content: " ↗"; font-family: var(--body); color: var(--muted); font-weight: 400; }
+.proj p { margin: 0; color: var(--muted); font-size: .95rem; flex: 1; }
+.proj .tags { margin-top: .3rem; }
+
+/* Activity */
+.activity { display: grid; gap: 1rem; }
+.activity img { width: 100%; height: auto; display: block; border: 1px solid var(--line); }
+.activity p { margin: 0; color: var(--muted); font-size: .95rem; }
+
+.skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1.25rem 2rem; }
+.skills h3 { font: 500 .78rem/1.4 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 .35rem; }
+.skills p { margin: 0; }
+
+.services { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.svc { background: var(--card); padding: 1.5rem; display: flex; flex-direction: column; gap: .6rem; min-width: 0; }
+.svc .n { font: 500 .75rem/1 var(--mono); color: var(--accent); text-transform: uppercase; letter-spacing: .08em; }
+.svc h3 { font: 700 1.15rem/1.2 var(--display); font-stretch: 104%; margin: 0; }
+.svc p { margin: 0; color: var(--muted); font-size: .95rem; }
+.entity { margin-top: 1.25rem; font: 400 .8rem/1.6 var(--mono); color: var(--muted); }
+
+/* Contact + footer back in the storm */
+.closing { background: var(--storm); color: #E3EAF0; }
+.closing a:hover { color: #E3A645; }
+.contact { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2rem; align-items: end; padding-block: 3.5rem; }
+.contact p.big { font: 800 clamp(1.6rem, 3.8vw, 2.5rem)/1.12 var(--display); font-stretch: 108%; letter-spacing: -.02em; margin: 0; max-width: 20ch; text-wrap: balance; }
+.contact p.big em { font-style: normal; color: #E3A645; }
+.contact dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .4rem 1rem; font: 400 .9rem/1.5 var(--mono); }
+.contact dt { color: #94A3B3; }
+.contact dd { margin: 0; overflow-wrap: anywhere; }
+footer { border-top: 1px solid var(--slate); padding-block: 2rem 3rem; display: flex; gap: 1.5rem; justify-content: space-between; flex-wrap: wrap;
+         font: 400 .78rem/1.6 var(--mono); color: #94A3B3; }
+footer .story { max-width: 34rem; }
+
+@media (max-width: 820px) {
+  .grid, .services { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .paper { grid-template-columns: 1fr; }
+  .result { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 1.25rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .hero { grid-template-columns: 1fr; }
+  .big-mark { order: -1; width: 5.5rem; }
+  .row { grid-template-columns: 1fr; gap: .35rem; }
+  .grid, .services { grid-template-columns: 1fr; }
+  .facts { grid-template-columns: 1fr; }
+  .facts div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--slate); padding-top: 1rem; }
+  .contact { grid-template-columns: 1fr; }
+  .result { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="storm">
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="#">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" fill="none" stroke="#C9D6E2" stroke-width="5"/><circle cx="28.5" cy="35.5" r="16" fill="none" stroke="#C9D6E2" stroke-width="5"/><circle cx="26" cy="38" r="6.5" fill="#D9962B"/></svg>
+        Pedro Saraiva
+      </a>
+      <nav aria-label="Sections"><a href="#work">Experience</a><a href="#research">Research</a><a href="#projects">Projects</a><a href="#activity">Activity</a><a href="#services">Services</a><a href="pedro-saraiva-cv.pdf">CV</a></nav>
+    </header>
+
+    <div class="hero">
+      <div>
+        <p class="eyebrow">AI Engineer · Goiânia, Brazil · UTC−3, 1–2 h from US Eastern</p>
+        <h1>I build AI agents that run in <em>production</em>, and the infrastructure under them.</h1>
+        <p class="lede">LLM agents, RAG and MLOps on Kubernetes. I take models from notebook to a monitored service that a business depends on. Open to remote contracts with teams in the US and Europe.</p>
+        <div class="ctas">
+          <a class="btn primary" href="mailto:pedro.a.saraiva08@gmail.com">Email me</a>
+          <a class="btn" href="pedro-saraiva-cv.pdf">Download CV (PDF)</a>
+          <a class="btn" href="https://www.linkedin.com/in/pedro-a-maciel-saraiva">LinkedIn</a>
+          <a class="btn" href="https://github.com/PedroMSaraiva">GitHub</a>
+        </div>
+      </div>
+      <svg class="big-mark" viewBox="0 0 64 64" role="img" aria-label="The Saraiva hailstone mark: two rings and an amber core">
+        <circle class="ring" cx="32" cy="32" r="27" stroke-width="4.2" transform="rotate(-90 32 32)"/>
+        <circle class="ring inner" cx="28.5" cy="35.5" r="16" stroke-width="4.2" transform="rotate(-90 28.5 35.5)"/>
+        <circle class="core" cx="26" cy="38" r="6.5"/>
+      </svg>
+    </div>
+
+    <div class="facts">
+      <div><b>Now</b><span>Shipping LLM agents at Confi</span></div>
+      <div><b>ENIAC 2025</b><span>Published: VLMs for tax assessment</span></div>
+      <div><b id="contribs">590+</b><span>GitHub contributions, last 12 months</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <main>
+    <section id="work">
+      <div class="sec-head"><h2>Experience</h2></div>
+      <div class="rows">
+        <article class="row">
+          <div class="k">2026 – now<br>AI / MLOps Engineer</div>
+          <div>
+            <h3>Confi / Neotrust</h3>
+            <p>LLM agents and ML systems in production for e-commerce analytics and customer operations, shipped to Kubernetes with GitOps. I own the path from prototype to a monitored service: evaluation, secrets, deploys and pipeline automation.</p>
+            <ul class="tags"><li>LLM agents</li><li>Kubernetes</li><li>Argo CD</li><li>Vault</li><li>Python</li></ul>
+          </div>
+        </article>
+        <article class="row">
+          <div class="k">AI Engineering Intern</div>
+          <div>
+            <h3>Encore Asset Management</h3>
+            <p>Built Janus, a multi-agent LLM system where new data sources plug in to generate equity research reports. Analysts use the reports for buy and sell decisions on companies listed on B3.</p>
+            <ul class="tags"><li>Multi-agent</li><li>LLM</li><li>Finance</li></ul>
+          </div>
+        </article>
+        <article class="row">
+          <div class="k">2025 – 2026<br>LLM Engineer · CEIA UFG</div>
+          <div>
+            <h3>Tax-regularization assistant for Brazil's Receita Federal</h3>
+            <p>A locally hosted LLM system that helps citizens with tax regularization.</p>
+            <ul class="tags"><li>Local LLMs</li><li>RAG</li><li>Public sector</li></ul>
+          </div>
+        </article>
+        <article class="row">
+          <div class="k">2024 – 2026<br>NLP Engineer · CEIA UFG</div>
+          <div>
+            <h3>Educational chatbots and jurimetrics</h3>
+            <p>End-to-end NLP for an educational chatbot (robotics learning and civil-service exam prep), from data collection to inference. Before that, classifiers and analytics pipelines over legal cases to support lawyers' decisions.</p>
+            <ul class="tags"><li>NLP</li><li>Classification</li><li>Legal analytics</li></ul>
+          </div>
+        </article>
+        <article class="row">
+          <div class="k">2023 – 2026<br>Pequi Mecânico · UFG</div>
+          <div>
+            <h3>Aerial robotics researcher</h3>
+            <p>Computer vision for autonomous drone perception and navigation, with real-time inference on edge hardware.</p>
+            <ul class="tags"><li>OpenCV</li><li>ROS</li><li>Edge inference</li></ul>
+          </div>
+        </article>
+        <article class="row">
+          <div class="k">2023 – 2026<br>Education · UFG</div>
+          <div>
+            <h3>B.Sc. Artificial Intelligence</h3>
+            <p>Member of the first AI bachelor's cohort in Brazil. I lead the infrastructure team of the GAIA study group.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="research">
+      <div class="sec-head"><h2>Research</h2></div>
+      <article class="paper">
+        <div>
+          <p class="venue">ENIAC 2025 · SBC · pp. 676–687</p>
+          <h3>Vision-Language Models for Automated Property Feature Extraction in Tax Assessment: A Case Study</h3>
+          <p class="authors">Gustavo R. Ribeiro, <b>Pedro A. M. Saraiva</b>, Luis H. A. Rosa, Enzo L. Marques, Gustavo L. B. Pereira, Pedro M. L. Campos, Luiz M. L. Pascoal, Sávio S. T. de Oliveira</p>
+          <p>City halls in Brazil send inspectors on site to classify a building's construction features for property tax (IPTU). We built a benchmark grounded in Goiânia's tax code and tested twelve VLMs (Gemini, Gemma, LLaVA, Qwen) zero-shot on listing photos across 11 legal categories, from structure to finishes.</p>
+          <div class="links"><a href="https://doi.org/10.5753/eniac.2025.13998">doi:10.5753/eniac.2025.13998</a><a href="https://sol.sbc.org.br/index.php/eniac/article/download/38759/38532">PDF</a></div>
+        </div>
+        <div class="result">
+          <div><b>12</b><span>VLMs benchmarked</span></div>
+          <div><b>11</b><span>construction categories from the tax code</span></div>
+          <div><b>0.77</b><span>best macro F1 (Gemini 1.5 Pro)</span></div>
+        </div>
+      </article>
+      <div class="rows" style="margin-top:1.5rem">
+        <article class="row">
+          <div class="k">Ongoing · AKCIT</div>
+          <div>
+            <h3>Digital twins from drone imagery</h3>
+            <p>Multi-view 3D reconstruction for digital twins, testing recent methods such as MUSt3R and Gaussian splatting on aerial captures.</p>
+            <ul class="tags"><li>3D reconstruction</li><li>Computer vision</li><li>UAV</li></ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="sec-head">
+        <h2>Projects</h2>
+        <div class="filters" role="group" aria-label="Filter projects">
+          <button type="button" aria-pressed="true" data-f="all">All</button>
+          <button type="button" aria-pressed="false" data-f="mlops">Data · MLOps</button>
+          <button type="button" aria-pressed="false" data-f="cv">Vision · DL</button>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="proj" data-tags="mlops">
+          <span class="area">Privacy · NLP</span>
+          <h3><a href="https://github.com/PedroMSaraiva/nfe-xml-anonymizer">NF-e anonymizer</a></h3>
+          <p>Strips personal and company identifiers from Brazilian electronic invoices (XML) with custom Presidio recognizers and a before/after review UI.</p>
+          <ul class="tags"><li>Presidio</li><li>FastAPI</li><li>Docker</li></ul>
+        </article>
+        <article class="proj" data-tags="cv">
+          <span class="area">Vision · Local-first</span>
+          <h3><a href="https://github.com/PedroMSaraiva/scoliosismaxxing">Scoliosismaxxing</a></h3>
+          <p>A webcam posture monitor for programmers. MediaPipe tracks 33 body landmarks on CPU, scores your posture and shows a weekly trend. Nothing leaves your machine.</p>
+          <ul class="tags"><li>MediaPipe</li><li>SQLite</li><li>CPU only</li></ul>
+        </article>
+        <article class="proj" data-tags="cv">
+          <span class="area">Deep learning research</span>
+          <h3><a href="https://github.com/PedroMSaraiva/noprop-benchmark">NoProp vs. backprop</a></h3>
+          <p>Benchmarks layer-local training with no gradient flow between layers against end-to-end backpropagation, with parallel and Numba versions.</p>
+          <ul class="tags"><li>PyTorch</li><li>Numba</li><li>Replication</li></ul>
+        </article>
+        <article class="proj" data-tags="mlops">
+          <span class="area">Cloud data platform</span>
+          <h3><a href="https://github.com/PedroMSaraiva/PDM_final_project">Public-data lakehouse on GCP</a></h3>
+          <p>Cloud Functions triggered by Pub/Sub ingest Receita Federal, PGFN and Central Bank data into GCS and BigQuery on a schedule, feeding Pandas and Spark models.</p>
+          <ul class="tags"><li>BigQuery</li><li>Pub/Sub</li><li>Spark</li></ul>
+        </article>
+        <article class="proj" data-tags="mlops">
+          <span class="area">MLOps</span>
+          <h3><a href="https://github.com/PedroMSaraiva/mlops-trading">Crypto forecasting pipeline</a></h3>
+          <p>A training pipeline that detects CI and switches to offline data, so models train reproducibly in GitHub Actions or Jenkins.</p>
+          <ul class="tags"><li>CI/CD</li><li>uv</li><li>Time series</li></ul>
+        </article>
+        <article class="proj" data-tags="mlops">
+          <span class="area">Data engineering</span>
+          <h3><a href="https://github.com/PedroMSaraiva/renascenca-ml">Election data pipeline</a></h3>
+          <p>Downloads Brazil's open electoral data (TSE), validates every column against the official data dictionary and converts it to Parquet for analysis.</p>
+          <ul class="tags"><li>Parquet</li><li>Open data</li><li>Validation</li></ul>
+        </article>
+        <article class="proj" data-tags="mlops">
+          <span class="area">Orchestration</span>
+          <h3><a href="https://github.com/PedroMSaraiva/DAG_imoveis">Property-tax data DAG</a></h3>
+          <p>An Airflow pipeline that loads property listings and assessment spreadsheets into Postgres for IPTU analysis.</p>
+          <ul class="tags"><li>Airflow</li><li>Postgres</li><li>Docker</li></ul>
+        </article>
+        <article class="proj" data-tags="cv">
+          <span class="area">Generative models</span>
+          <h3><a href="https://github.com/PedroMSaraiva/amns-vae-study">VAE latent-space study</a></h3>
+          <p>A variational autoencoder on MNIST and FashionMNIST, with latent interpolation, 2D/3D manifolds, t-SNE/UMAP views and animated training.</p>
+          <ul class="tags"><li>PyTorch</li><li>VAE</li><li>Visualization</li></ul>
+        </article>
+        <article class="proj" data-tags="cv">
+          <span class="area">Robotics · Vision</span>
+          <h3><a href="https://github.com/PedroMSaraiva/base_detection">UAV landing-base detection</a></h3>
+          <p>Detection and position correction of landing bases for autonomous drones, built with the Pequi Mecânico team for competition.</p>
+          <ul class="tags"><li>OpenCV</li><li>ROS</li><li>UAV</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="activity">
+      <div class="sec-head"><h2>Activity</h2><a href="https://github.com/PedroMSaraiva" style="font:500 .8rem var(--mono)">github.com/PedroMSaraiva</a></div>
+      <div class="activity">
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/PedroMSaraiva/PedroMSaraiva/output/activity-dark.svg">
+          <img alt="GitHub contributions per month over the last 12 months" src="https://raw.githubusercontent.com/PedroMSaraiva/PedroMSaraiva/output/activity-light.svg" width="1000" height="300" loading="lazy">
+        </picture>
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/PedroMSaraiva/PedroMSaraiva/output/snake-dark.svg">
+          <img alt="A snake eating the contribution graph" src="https://raw.githubusercontent.com/PedroMSaraiva/PedroMSaraiva/output/snake-light.svg" width="880" height="192" loading="lazy">
+        </picture>
+        <p>Public and private contributions, redrawn every morning. Most of my work lives in private company repositories.</p>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="sec-head"><h2>Skills</h2></div>
+      <div class="skills">
+        <div><h3>ML and LLMs</h3><p>PyTorch, Hugging Face, scikit-learn, LangChain, RAG, agents, VLMs, evaluation, OpenCV</p></div>
+        <div><h3>MLOps and infra</h3><p>Docker, Kubernetes, Argo CD, Vault, GitHub Actions, Airflow, BigQuery, monitoring</p></div>
+        <div><h3>Engineering</h3><p>Python (advanced), FastAPI, SQL, data pipelines, system design</p></div>
+        <div><h3>Languages</h3><p>Portuguese (native), English (professional working proficiency)</p></div>
+      </div>
+    </section>
+
+    <section id="writing">
+      <div class="sec-head"><h2>Writing</h2></div>
+      <div class="rows">
+        <article class="row">
+          <div class="k">LinkedIn<br>every other day</div>
+          <div>
+            <h3><a href="https://www.linkedin.com/in/pedro-a-maciel-saraiva/recent-activity/all/">Layer by Layer</a></h3>
+            <p>Short notes on running AI agents in production, MLOps, and the papers behind them. One idea per post, with a carousel you can read in a minute.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="sec-head"><h2>Saraiva Cognitive · services</h2></div>
+      <div class="services">
+        <div class="svc"><span class="n">Build</span><h3>Agents and RAG to production</h3><p>From a working prototype to a monitored service: retrieval, tool use, evaluation, guardrails and cost control.</p></div>
+        <div class="svc"><span class="n">Run</span><h3>MLOps and AI infrastructure</h3><p>Model serving on Kubernetes, GitOps deploys, secrets management and CI pipelines for training and evaluation.</p></div>
+        <div class="svc"><span class="n">Teach</span><h3>Training for engineering teams</h3><p>Hands-on workshops on LLM engineering and MLOps, built around your team's own stack.</p></div>
+      </div>
+      <p class="entity">Contracts are invoiced by Saraiva Inteligência Artificial LTDA (Saraiva Cognitive), Brazil · CNPJ 68.341.716/0001-96 · USD invoicing available.</p>
+    </section>
+  </main>
+</div>
+
+<div class="closing" id="contact">
+  <div class="wrap">
+    <div class="contact">
+      <p class="big">Have an AI system that needs to work <em>outside</em> the notebook? Write to me.</p>
+      <dl>
+        <dt>Email</dt><dd><a href="mailto:pedro.a.saraiva08@gmail.com">pedro.a.saraiva08@gmail.com</a></dd>
+        <dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/pedro-a-maciel-saraiva">in/pedro-a-maciel-saraiva</a></dd>
+        <dt>GitHub</dt><dd><a href="https://github.com/PedroMSaraiva">PedroMSaraiva</a></dd>
+      </dl>
+    </div>
+    <footer>
+      <span>© 2026 Pedro Saraiva · Saraiva Cognitive</span>
+      <span class="story">In Portuguese, <i>saraiva</i> means hail. A hailstone grows one layer at a time as it cycles through the storm, the way a model improves one epoch at a time. That's the mark.</span>
+    </footer>
+  </div>
+</div>
+
+<script>
+// Project filter
+const buttons = document.querySelectorAll(".filters button");
+buttons.forEach(b => b.addEventListener("click", () => {
+  buttons.forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  document.querySelectorAll(".proj").forEach(p => { p.hidden = b.dataset.f !== "all" && p.dataset.tags !== b.dataset.f; });
+}));
+// Live contribution count from the chart the profile workflow redraws every morning
+fetch("https://raw.githubusercontent.com/PedroMSaraiva/PedroMSaraiva/output/activity-light.svg")
+  .then(r => r.ok ? r.text() : "")
+  .then(t => { const m = t.match(/(\d[\d,]*) CONTRIBUTIONS/); if (m) document.getElementById("contribs").textContent = m[1]; })
+  .catch(() => {});
+</script>
+</body>
 </html>
